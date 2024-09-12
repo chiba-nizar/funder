@@ -1,177 +1,214 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable react/function-component-definition */
-/**
-=========================================================
-* Material Dashboard 2 React - v2.2.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/material-dashboard-react
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
-import MDAvatar from "components/MDAvatar";
-import MDBadge from "components/MDBadge";
 
-// Images
-import team2 from "assets/images/team-2.jpg";
-import team3 from "assets/images/team-3.jpg";
-import team4 from "assets/images/team-4.jpg";
+export default function DataTable() {
+  const [stats, setStats] = useState([]);
 
-export default function data() {
-  const Author = ({ image, name, email }) => (
-    <MDBox display="flex" alignItems="center" lineHeight={1}>
-      <MDAvatar src={image} name={name} size="sm" />
-      <MDBox ml={2} lineHeight={1}>
-        <MDTypography display="block" variant="button" fontWeight="medium">
-          {name}
-        </MDTypography>
-        <MDTypography variant="caption">{email}</MDTypography>
-      </MDBox>
-    </MDBox>
-  );
+  // Fetch data from API when component mounts
+  useEffect(() => {
+    axios
+      .get("http://localhost:3000/api/data/getAllStats")
+      .then((response) => {
+        if (response.data.success) {
+          setStats(response.data.Stats);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+      });
+  }, []);
 
-  const Job = ({ title, description }) => (
-    <MDBox lineHeight={1} textAlign="left">
-      <MDTypography display="block" variant="caption" color="text" fontWeight="medium">
-        {title}
+  // Creating the rows dynamically based on the response data
+  const rows = stats.map((stat) => ({
+    Gouvernorat: (
+      <MDTypography display="block" variant="caption" fontWeight="medium">
+        {stat.Gouvernorat}
       </MDTypography>
-      <MDTypography variant="caption">{description}</MDTypography>
-    </MDBox>
-  );
+    ),
+    Nombre_total_de_colis: (
+      <MDTypography display="block" variant="caption" fontWeight="medium">
+        {stat.Nombre_total_de_colis}
+      </MDTypography>
+    ),
+    Somme_de_Cr_apres_remise: (
+      <MDTypography display="block" variant="caption" fontWeight="medium">
+        {stat.Somme_de_Cr_apres_remise}
+      </MDTypography>
+    ),
+    Nombre_de_Colis_Livrés: (
+      <MDTypography display="block" variant="caption" fontWeight="medium">
+        {stat.Nombre_de_Colis_Livrés}
+      </MDTypography>
+    ),
+    Somme_de_Cr_apres_remise_des_colis_livrés: (
+      <MDTypography display="block" variant="caption" fontWeight="medium">
+        {stat.Somme_de_Cr_apres_remise_des_colis_livrés}
+      </MDTypography>
+    ),
+    Nombre_de_Colis_Retournés: (
+      <MDTypography display="block" variant="caption" fontWeight="medium">
+        {stat.Nombre_de_Colis_Retournés}
+      </MDTypography>
+    ),
+    Somme_de_Cr_apres_remise_des_colis_retournés: (
+      <MDTypography display="block" variant="caption" fontWeight="medium">
+        {stat.Somme_de_Cr_apres_remise_des_colis_retournés}
+      </MDTypography>
+    ),
+    Nombre_de_Colis_Non_confirmés: (
+      <MDTypography display="block" variant="caption" fontWeight="medium">
+        {stat.Nombre_de_Colis_Non_confirmés}
+      </MDTypography>
+    ),
+    Somme_de_Cr_apres_remise_des_colis_non_confirmés: (
+      <MDTypography display="block" variant="caption" fontWeight="medium">
+        {stat.Somme_de_Cr_apres_remise_des_colis_non_confirmés}
+      </MDTypography>
+    ),
+    Nombre_hommes: (
+      <MDTypography display="block" variant="caption" fontWeight="medium">
+        {stat.Nombre_hommes}
+      </MDTypography>
+    ),
+    Nombre_de_femmes: (
+      <MDTypography display="block" variant="caption" fontWeight="medium">
+        {stat.Nombre_de_femmes}
+      </MDTypography>
+    ),
+    Nombre_hommes_livrés: (
+      <MDTypography display="block" variant="caption" fontWeight="medium">
+        {stat.Nombre_hommes_livrés}
+      </MDTypography>
+    ),
+    Somme_de_Cr_apres_remise_pour_hommes_livrés: (
+      <MDTypography display="block" variant="caption" fontWeight="medium">
+        {stat.Somme_de_Cr_apres_remise_pour_hommes_livrés}
+      </MDTypography>
+    ),
+    Nombre_hommes_retournés: (
+      <MDTypography display="block" variant="caption" fontWeight="medium">
+        {stat.Nombre_hommes_retournés}
+      </MDTypography>
+    ),
+    Somme_de_Cr_apres_remise_pour_hommes_retournés: (
+      <MDTypography display="block" variant="caption" fontWeight="medium">
+        {stat.Somme_de_Cr_apres_remise_pour_hommes_retournés}
+      </MDTypography>
+    ),
+    Nombre_hommes_non_confirmés: (
+      <MDTypography display="block" variant="caption" fontWeight="medium">
+        {stat.Nombre_hommes_non_confirmés}
+      </MDTypography>
+    ),
+    Somme_de_Cr_apres_remise_pour_hommes_non_confirmés: (
+      <MDTypography display="block" variant="caption" fontWeight="medium">
+        {stat.Somme_de_Cr_apres_remise_pour_hommes_non_confirmés}
+      </MDTypography>
+    ),
+    Nombre_de_femmes_livrées: (
+      <MDTypography display="block" variant="caption" fontWeight="medium">
+        {stat.Nombre_de_femmes_livrées}
+      </MDTypography>
+    ),
+    Somme_de_Cr_apres_remise_pour_femmes_livrées: (
+      <MDTypography display="block" variant="caption" fontWeight="medium">
+        {stat.Somme_de_Cr_apres_remise_pour_femmes_livrées}
+      </MDTypography>
+    ),
+    Nombre_de_femmes_retournées: (
+      <MDTypography display="block" variant="caption" fontWeight="medium">
+        {stat.Nombre_de_femmes_retournées}
+      </MDTypography>
+    ),
+    Somme_de_Cr_apres_remise_pour_femmes_retournées: (
+      <MDTypography display="block" variant="caption" fontWeight="medium">
+        {stat.Somme_de_Cr_apres_remise_pour_femmes_retournées}
+      </MDTypography>
+    ),
+    Nombre_de_femmes_non_confirmées: (
+      <MDTypography display="block" variant="caption" fontWeight="medium">
+        {stat.Nombre_de_femmes_non_confirmées}
+      </MDTypography>
+    ),
+    Somme_de_Cr_apres_remise_pour_femmes_non_confirmées: (
+      <MDTypography display="block" variant="caption" fontWeight="medium">
+        {stat.Somme_de_Cr_apres_remise_pour_femmes_non_confirmées}
+      </MDTypography>
+    ),
+  }));
 
   return {
     columns: [
-      { Header: "author", accessor: "author", width: "45%", align: "left" },
-      { Header: "function", accessor: "function", align: "left" },
-      { Header: "status", accessor: "status", align: "center" },
-      { Header: "employed", accessor: "employed", align: "center" },
-      { Header: "action", accessor: "action", align: "center" },
-    ],
-
-    rows: [
+      { Header: "Gouvernorat", accessor: "Gouvernorat", width: "20%", align: "left" },
+      { Header: "Total Colis", accessor: "Nombre_total_de_colis", align: "center" },
+      { Header: "Cr après remise", accessor: "Somme_de_Cr_apres_remise", align: "center" },
+      { Header: "Colis Livrés", accessor: "Nombre_de_Colis_Livrés", align: "center" },
       {
-        author: <Author image={team2} name="John Michael" email="john@creative-tim.com" />,
-        function: <Job title="Manager" description="Organization" />,
-        status: (
-          <MDBox ml={-1}>
-            <MDBadge badgeContent="online" color="success" variant="gradient" size="sm" />
-          </MDBox>
-        ),
-        employed: (
-          <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-            23/04/18
-          </MDTypography>
-        ),
-        action: (
-          <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-            Edit
-          </MDTypography>
-        ),
+        Header: "Cr Livrés",
+        accessor: "Somme_de_Cr_apres_remise_des_colis_livrés",
+        align: "center",
+      },
+      { Header: "Colis Retournés", accessor: "Nombre_de_Colis_Retournés", align: "center" },
+      {
+        Header: "Cr Retournés",
+        accessor: "Somme_de_Cr_apres_remise_des_colis_retournés",
+        align: "center",
+      },
+      { Header: "Colis Non Confirmés", accessor: "Nombre_de_Colis_Non_confirmés", align: "center" },
+      {
+        Header: "Cr Non Confirmés",
+        accessor: "Somme_de_Cr_apres_remise_des_colis_non_confirmés",
+        align: "center",
+      },
+      { Header: "Nombre Hommes", accessor: "Nombre_hommes", align: "center" },
+      { Header: "Nombre Femmes", accessor: "Nombre_de_femmes", align: "center" },
+      { Header: "Hommes Livrés", accessor: "Nombre_hommes_livrés", align: "center" },
+      {
+        Header: "Cr Hommes Livrés",
+        accessor: "Somme_de_Cr_apres_remise_pour_hommes_livrés",
+        align: "center",
+      },
+      { Header: "Hommes Retournés", accessor: "Nombre_hommes_retournés", align: "center" },
+      {
+        Header: "Cr Hommes Retournés",
+        accessor: "Somme_de_Cr_apres_remise_pour_hommes_retournés",
+        align: "center",
+      },
+      { Header: "Hommes Non Confirmés", accessor: "Nombre_hommes_non_confirmés", align: "center" },
+      {
+        Header: "Cr Hommes Non Confirmés",
+        accessor: "Somme_de_Cr_apres_remise_pour_hommes_non_confirmés",
+        align: "center",
+      },
+      { Header: "Femmes Livrées", accessor: "Nombre_de_femmes_livrées", align: "center" },
+      {
+        Header: "Cr Femmes Livrées",
+        accessor: "Somme_de_Cr_apres_remise_pour_femmes_livrées",
+        align: "center",
+      },
+      { Header: "Femmes Retournées", accessor: "Nombre_de_femmes_retournées", align: "center" },
+      {
+        Header: "Cr Femmes Retournées",
+        accessor: "Somme_de_Cr_apres_remise_pour_femmes_retournées",
+        align: "center",
       },
       {
-        author: <Author image={team3} name="Alexa Liras" email="alexa@creative-tim.com" />,
-        function: <Job title="Programator" description="Developer" />,
-        status: (
-          <MDBox ml={-1}>
-            <MDBadge badgeContent="offline" color="dark" variant="gradient" size="sm" />
-          </MDBox>
-        ),
-        employed: (
-          <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-            11/01/19
-          </MDTypography>
-        ),
-        action: (
-          <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-            Edit
-          </MDTypography>
-        ),
+        Header: "Femmes Non Confirmées",
+        accessor: "Nombre_de_femmes_non_confirmées",
+        align: "center",
       },
       {
-        author: <Author image={team4} name="Laurent Perrier" email="laurent@creative-tim.com" />,
-        function: <Job title="Executive" description="Projects" />,
-        status: (
-          <MDBox ml={-1}>
-            <MDBadge badgeContent="online" color="success" variant="gradient" size="sm" />
-          </MDBox>
-        ),
-        employed: (
-          <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-            19/09/17
-          </MDTypography>
-        ),
-        action: (
-          <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-            Edit
-          </MDTypography>
-        ),
-      },
-      {
-        author: <Author image={team3} name="Michael Levi" email="michael@creative-tim.com" />,
-        function: <Job title="Programator" description="Developer" />,
-        status: (
-          <MDBox ml={-1}>
-            <MDBadge badgeContent="online" color="success" variant="gradient" size="sm" />
-          </MDBox>
-        ),
-        employed: (
-          <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-            24/12/08
-          </MDTypography>
-        ),
-        action: (
-          <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-            Edit
-          </MDTypography>
-        ),
-      },
-      {
-        author: <Author image={team3} name="Richard Gran" email="richard@creative-tim.com" />,
-        function: <Job title="Manager" description="Executive" />,
-        status: (
-          <MDBox ml={-1}>
-            <MDBadge badgeContent="offline" color="dark" variant="gradient" size="sm" />
-          </MDBox>
-        ),
-        employed: (
-          <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-            04/10/21
-          </MDTypography>
-        ),
-        action: (
-          <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-            Edit
-          </MDTypography>
-        ),
-      },
-      {
-        author: <Author image={team4} name="Miriam Eric" email="miriam@creative-tim.com" />,
-        function: <Job title="Programator" description="Developer" />,
-        status: (
-          <MDBox ml={-1}>
-            <MDBadge badgeContent="offline" color="dark" variant="gradient" size="sm" />
-          </MDBox>
-        ),
-        employed: (
-          <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-            14/09/20
-          </MDTypography>
-        ),
-        action: (
-          <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-            Edit
-          </MDTypography>
-        ),
+        Header: "Cr Femmes Non Confirmées",
+        accessor: "Somme_de_Cr_apres_remise_pour_femmes_non_confirmées",
+        align: "center",
       },
     ],
+    rows,
   };
 }
