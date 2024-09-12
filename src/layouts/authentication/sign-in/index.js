@@ -1,7 +1,6 @@
 import { useState } from "react";
-
-// react-router-dom components
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom"; // Import useNavigate for redirection
+import axios from "axios"; // Import axios for API requests
 
 // @mui material components
 import Card from "@mui/material/Card";
@@ -27,9 +26,40 @@ import BasicLayout from "layouts/authentication/components/BasicLayout";
 import bgImage from "assets/images/bg-sign-in-basic.jpeg";
 
 function Basic() {
+  const baseUrl = process.env.REACT_APP_API_URL;
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
+  const [error, setError] = useState(null); // Error message
+  const [successMessage, setSuccessMessage] = useState(null); // Success message
+  const navigate = useNavigate(); // Hook for navigation
+
+  const url = `${baseUrl}authentication/sign-in`;
 
   const handleSetRememberMe = () => setRememberMe(!rememberMe);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const res = await axios.post(url, { email, password });
+
+      if (res.data.success) {
+        setSuccessMessage(res.data.message); // Set the success message from response
+        setError(null); // Clear any previous error message
+
+        // Redirect to the /tables page after 2 seconds
+        setTimeout(() => {
+          navigate("/tables");
+        }, 2000); // 2-second delay before redirecting
+      } else {
+        setError("Invalid credentials. Please try again.");
+      }
+    } catch (err) {
+      setError("Error signing in. Please try again.");
+      console.error(err);
+    }
+  };
 
   return (
     <BasicLayout image={bgImage}>
@@ -67,12 +97,24 @@ function Basic() {
           </Grid>
         </MDBox>
         <MDBox pt={4} pb={3} px={3}>
-          <MDBox component="form" role="form">
+          <MDBox component="form" role="form" onSubmit={handleSubmit}>
             <MDBox mb={2}>
-              <MDInput type="email" label="Email" fullWidth />
+              <MDInput
+                type="email"
+                label="Email"
+                fullWidth
+                value={email}
+                onChange={(e) => setEmail(e.target.value)} // Update state with input value
+              />
             </MDBox>
             <MDBox mb={2}>
-              <MDInput type="password" label="Password" fullWidth />
+              <MDInput
+                type="password"
+                label="Password"
+                fullWidth
+                value={password}
+                onChange={(e) => setPassword(e.target.value)} // Update state with input value
+              />
             </MDBox>
             <MDBox display="flex" alignItems="center" ml={-1}>
               <Switch checked={rememberMe} onChange={handleSetRememberMe} />
@@ -86,9 +128,28 @@ function Basic() {
                 &nbsp;&nbsp;Remember me
               </MDTypography>
             </MDBox>
+
+            {/* Error message display */}
+            {error && (
+              <MDBox mt={2} mb={1}>
+                <MDTypography variant="button" color="error" fontWeight="bold">
+                  {error}
+                </MDTypography>
+              </MDBox>
+            )}
+
+            {/* Success message display */}
+            {successMessage && (
+              <MDBox mt={2} mb={1}>
+                <MDTypography variant="button" color="success" fontWeight="bold">
+                  {successMessage}
+                </MDTypography>
+              </MDBox>
+            )}
+
             <MDBox mt={4} mb={1}>
-              <MDButton variant="gradient" color="info" fullWidth>
-                sign in
+              <MDButton type="submit" variant="gradient" color="info" fullWidth>
+                Sign in
               </MDButton>
             </MDBox>
             <MDBox mt={3} mb={1} textAlign="center">

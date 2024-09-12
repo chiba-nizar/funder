@@ -1,21 +1,6 @@
-/**
-=========================================================
-* Material Dashboard 2 React - v2.2.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/material-dashboard-react
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
-// react-router-dom components
-import { Link } from "react-router-dom";
-
+import { Link, useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import axios from "axios";
 // @mui material components
 import Card from "@mui/material/Card";
 import Checkbox from "@mui/material/Checkbox";
@@ -33,6 +18,53 @@ import CoverLayout from "layouts/authentication/components/CoverLayout";
 import bgImage from "assets/images/bg-sign-up-cover.jpeg";
 
 function Cover() {
+  const baseUrl = process.env.REACT_APP_API_URL;
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [signUp, setSignUp] = useState(null);
+  const [error, setError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const navigate = useNavigate(); // Hook for navigation
+
+  const url = `${baseUrl}authentication/sign-up`;
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // Basic validation
+    if (!fullName || !email || !password) {
+      setError("All fields are required");
+      return;
+    }
+
+    if (!agreedToTerms) {
+      setError("You must agree to the terms and conditions");
+      return;
+    }
+
+    try {
+      const res = await axios.post(url, { full_name: fullName, email, password });
+
+      if (res.data.success) {
+        setSignUp(res.data); // Save the response
+        setSuccessMessage(res.data.message); // Set the success message
+        setError(null); // Reset error if request is successful
+
+        // Navigate to sign-in page after successful sign-up
+        setTimeout(() => {
+          navigate("/authentication/sign-in");
+        }, 2000); // Delay of 2 seconds before redirecting
+      } else {
+        setError("Sign-up failed. Please try again.");
+      }
+    } catch (err) {
+      setError("Error signing up, please try again.");
+      console.error(err);
+    }
+  };
+
   return (
     <CoverLayout image={bgImage}>
       <Card>
@@ -55,25 +87,49 @@ function Cover() {
           </MDTypography>
         </MDBox>
         <MDBox pt={4} pb={3} px={3}>
-          <MDBox component="form" role="form">
+          <MDBox component="form" role="form" onSubmit={handleSubmit}>
             <MDBox mb={2}>
-              <MDInput type="text" label="Name" variant="standard" fullWidth />
+              <MDInput
+                type="text"
+                label="Full name"
+                variant="standard"
+                fullWidth
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)} // Update state with input value
+              />
             </MDBox>
             <MDBox mb={2}>
-              <MDInput type="email" label="Email" variant="standard" fullWidth />
+              <MDInput
+                type="email"
+                label="Email"
+                variant="standard"
+                fullWidth
+                value={email}
+                onChange={(e) => setEmail(e.target.value)} // Update state with input value
+              />
             </MDBox>
             <MDBox mb={2}>
-              <MDInput type="password" label="Password" variant="standard" fullWidth />
+              <MDInput
+                type="password"
+                label="Password"
+                variant="standard"
+                fullWidth
+                value={password}
+                onChange={(e) => setPassword(e.target.value)} // Update state with input value
+              />
             </MDBox>
             <MDBox display="flex" alignItems="center" ml={-1}>
-              <Checkbox />
+              <Checkbox
+                checked={agreedToTerms}
+                onChange={(e) => setAgreedToTerms(e.target.checked)} // Handle checkbox state
+              />
               <MDTypography
                 variant="button"
                 fontWeight="regular"
                 color="text"
                 sx={{ cursor: "pointer", userSelect: "none", ml: -1 }}
               >
-                &nbsp;&nbsp;I agree the&nbsp;
+                &nbsp;&nbsp;I agree to the&nbsp;
               </MDTypography>
               <MDTypography
                 component="a"
@@ -86,9 +142,28 @@ function Cover() {
                 Terms and Conditions
               </MDTypography>
             </MDBox>
+
+            {/* Error message display */}
+            {error && (
+              <MDBox mt={2} mb={1}>
+                <MDTypography variant="button" color="error" fontWeight="bold">
+                  {error}
+                </MDTypography>
+              </MDBox>
+            )}
+
+            {/* Success message display */}
+            {successMessage && (
+              <MDBox mt={2} mb={1}>
+                <MDTypography variant="button" color="success" fontWeight="bold">
+                  {successMessage}
+                </MDTypography>
+              </MDBox>
+            )}
+
             <MDBox mt={4} mb={1}>
-              <MDButton variant="gradient" color="info" fullWidth>
-                sign in
+              <MDButton type="submit" variant="gradient" color="info" fullWidth>
+                Sign Up
               </MDButton>
             </MDBox>
             <MDBox mt={3} mb={1} textAlign="center">
