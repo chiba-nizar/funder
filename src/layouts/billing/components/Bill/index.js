@@ -1,35 +1,24 @@
-/**
-=========================================================
-* Material Dashboard 2 React - v2.2.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/material-dashboard-react
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
-// prop-types is a library for typechecking of props
+import React from "react";
 import PropTypes from "prop-types";
-
-// @mui material components
 import Icon from "@mui/material/Icon";
-
-// Material Dashboard 2 React components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDButton from "components/MDButton";
-
-// Material Dashboard 2 React context
 import { useMaterialUIController } from "context";
+import axios from "axios";
 
-function Bill({ name, company, email, vat, noGutter }) {
+function Bill({ name, company, email, vat, noGutter, colis, onDelete }) {
   const [controller] = useMaterialUIController();
   const { darkMode } = controller;
+
+  const handleDelete = async () => {
+    try {
+      await axios.delete(`http://localhost:3000/api/data/delete/${colis}`);
+      if (onDelete) onDelete(colis); // Call the onDelete callback if provided
+    } catch (error) {
+      console.error("Error deleting item:", error);
+    }
+  };
 
   return (
     <MDBox
@@ -57,7 +46,7 @@ function Bill({ name, company, email, vat, noGutter }) {
 
           <MDBox display="flex" alignItems="center" mt={{ xs: 2, sm: 0 }} ml={{ xs: -1.5, sm: 0 }}>
             <MDBox mr={1}>
-              <MDButton variant="text" color="error">
+              <MDButton variant="text" color="error" onClick={handleDelete}>
                 <Icon>delete</Icon>&nbsp;delete
               </MDButton>
             </MDBox>
@@ -68,7 +57,7 @@ function Bill({ name, company, email, vat, noGutter }) {
         </MDBox>
         <MDBox mb={1} lineHeight={0}>
           <MDTypography variant="caption" color="text">
-            Company Name:&nbsp;&nbsp;&nbsp;
+            Numéro Colis:&nbsp;&nbsp;&nbsp;
             <MDTypography variant="caption" fontWeight="medium" textTransform="capitalize">
               {company}
             </MDTypography>
@@ -76,14 +65,14 @@ function Bill({ name, company, email, vat, noGutter }) {
         </MDBox>
         <MDBox mb={1} lineHeight={0}>
           <MDTypography variant="caption" color="text">
-            Email Address:&nbsp;&nbsp;&nbsp;
+            Numéro Télephone:&nbsp;&nbsp;&nbsp;
             <MDTypography variant="caption" fontWeight="medium">
               {email}
             </MDTypography>
           </MDTypography>
         </MDBox>
         <MDTypography variant="caption" color="text">
-          VAT Number:&nbsp;&nbsp;&nbsp;
+          Status:&nbsp;&nbsp;&nbsp;
           <MDTypography variant="caption" fontWeight="medium">
             {vat}
           </MDTypography>
@@ -105,6 +94,8 @@ Bill.propTypes = {
   email: PropTypes.string.isRequired,
   vat: PropTypes.string.isRequired,
   noGutter: PropTypes.bool,
+  colis: PropTypes.string.isRequired, // Add colis as a required prop
+  onDelete: PropTypes.func, // Add onDelete as a prop
 };
 
 export default Bill;
