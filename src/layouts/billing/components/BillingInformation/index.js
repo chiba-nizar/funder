@@ -41,7 +41,7 @@ function BillingInformation() {
         <MDTypography variant="h6" fontWeight="medium">
           Data Information
         </MDTypography>
-        <MDButton variant="outlined" color="primary" onClick={fetchData}>
+        <MDButton variant="outlined" color="dark" onClick={fetchData}>
           <Icon>refresh</Icon>&nbsp;Refresh
         </MDButton>
       </MDBox>
