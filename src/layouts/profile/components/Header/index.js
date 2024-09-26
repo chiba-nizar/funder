@@ -1,64 +1,77 @@
-/**
-=========================================================
-* Material Dashboard 2 React - v2.2.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/material-dashboard-react
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
 import { useState, useEffect } from "react";
+import axios from "axios"; // Import axios for making API requests
 
-// prop-types is a library for typechecking of props.
-import PropTypes from "prop-types";
-
-// @mui material components
 import Card from "@mui/material/Card";
 import Grid from "@mui/material/Grid";
 import AppBar from "@mui/material/AppBar";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Icon from "@mui/material/Icon";
+import PropTypes from "prop-types"; // Import PropTypes
 
-// Material Dashboard 2 React components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDAvatar from "components/MDAvatar";
-
-// Material Dashboard 2 React base styles
 import breakpoints from "assets/theme/base/breakpoints";
-
-// Images
-import burceMars from "assets/images/bruce-mars.jpg";
+import burceMars from "assets/images/bruce-mars.jpg"; // Default avatar image
 import backgroundImage from "assets/images/bg-profile.jpeg";
 
 function Header({ children }) {
   const [tabsOrientation, setTabsOrientation] = useState("horizontal");
   const [tabValue, setTabValue] = useState(0);
+  const [userData, setUserData] = useState({
+    full_name: "",
+    email: "",
+    avatar: burceMars, // Default avatar image
+  });
 
   useEffect(() => {
-    // A function that sets the orientation state of the tabs.
-    function handleTabsOrientation() {
+    // A function to fetch the logged-in user's data
+    const fetchUserData = async () => {
+      try {
+        // Get the token from localStorage
+        const token = localStorage.getItem("token");
+        console.log("token", token);
+
+        if (!token) {
+          console.error("No token found");
+          return;
+        }
+
+        // Set up the authorization header with the token
+        const config = {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        };
+        console.log("config", config);
+        // Make the API request to get the logged-in user's information
+        const response = await axios.get("http://localhost:3000/api/user/me", config);
+
+        // Update the state with the user data
+        setUserData({
+          full_name: response.data.user.full_name,
+          email: response.data.user.email,
+          avatar: response.data.user.avatar || burceMars, // Assuming you have avatar data
+        });
+      } catch (error) {
+        console.error("Error fetching user data", error);
+      }
+    };
+
+    // Fetch user data on component mount
+    fetchUserData();
+
+    // Function to handle tabs orientation (existing code)
+    const handleTabsOrientation = () => {
       return window.innerWidth < breakpoints.values.sm
         ? setTabsOrientation("vertical")
         : setTabsOrientation("horizontal");
-    }
+    };
 
-    /** 
-     The event listener that's calling the handleTabsOrientation function when resizing the window.
-    */
     window.addEventListener("resize", handleTabsOrientation);
+    handleTabsOrientation(); // Call on initial load
 
-    // Call the handleTabsOrientation function to set the state with the initial value.
-    handleTabsOrientation();
-
-    // Remove event listener on cleanup
     return () => window.removeEventListener("resize", handleTabsOrientation);
   }, [tabsOrientation]);
 
@@ -94,15 +107,15 @@ function Header({ children }) {
       >
         <Grid container spacing={3} alignItems="center">
           <Grid item>
-            <MDAvatar src={burceMars} alt="profile-image" size="xl" shadow="sm" />
+            <MDAvatar src={userData.avatar} alt="profile-image" size="xl" shadow="sm" />
           </Grid>
           <Grid item>
             <MDBox height="100%" mt={0.5} lineHeight={1}>
               <MDTypography variant="h5" fontWeight="medium">
-                Richard Davis
+                {userData.full_name}
               </MDTypography>
               <MDTypography variant="button" color="text" fontWeight="regular">
-                CEO / Co-Founder
+                {userData.email}
               </MDTypography>
             </MDBox>
           </Grid>
