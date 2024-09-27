@@ -34,9 +34,17 @@ function Bill({ name, company, email, vat, noGutter, colis, onDelete }) {
     crApresRemise: "",
   });
 
-  // Open popup for editing
-  const handleClickOpen = () => {
+  // Open popup for editing and fetch data
+  const handleClickOpen = async () => {
     setOpen(true);
+    try {
+      const response = await axios.get(`http://localhost:3000/api/data/getData/${colis}`);
+      if (response.data && response.data.colis) {
+        setFormData(response.data.colis); // Populate form with API response data
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
   };
 
   // Close popup
